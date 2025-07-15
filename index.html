@@ -1,99 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ticket Scanner</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(to right, #f8faff, #e4f0ff);
-        }
+  <meta charset="UTF-8" />
+  <title>🎟️ Helpdesk Ticket Scanner</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(to right, #f3f8ff, #eaf3ff);
+    }
 
-        h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
 
-        #urlInput {
-            width: 90%;
-            max-width: 500px;
-            padding: 14px;
-            font-size: 18px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    #urlInput {
+      width: 90%;
+      max-width: 500px;
+      padding: 14px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    }
 
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #444;
-        }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #444;
+    }
 
-        .ticket-list {
-            margin-top: 30px;
-            width: 90%;
-            max-width: 500px;
-            text-align: left;
-        }
+    .ticket-list {
+      margin-top: 30px;
+      width: 90%;
+      max-width: 500px;
+      text-align: left;
+    }
 
-        .ticket-list ul {
-            padding-left: 20px;
-        }
+    .ticket-list h3 {
+      margin-bottom: 8px;
+      color: #555;
+    }
 
-        .ticket-list li {
-            font-family: monospace;
-            font-size: 16px;
-            color: #222;
-        }
-    </style>
+    .ticket-list ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .ticket-list li {
+      font-family: monospace;
+      font-size: 16px;
+      color: #222;
+      margin-bottom: 4px;
+    }
+  </style>
 </head>
 <body>
-    <h2>🎟️ Helpdesk Ticket Scanner</h2>
-    <input type="text" id="urlInput" placeholder="Paste ticket URL here…" autocomplete="off" />
-    <p id="result"></p>
+  <h2>🎟️ Helpdesk Ticket Scanner</h2>
+  <input
+    type="text"
+    id="urlInput"
+    placeholder="Paste ticket URL here…"
+    autocomplete="off"
+  />
+  <p id="result"></p>
 
-    <div class="ticket-list">
-        <h3>Recent Tickets</h3>
-        <ul id="historyList"></ul>
-    </div>
+  <div class="ticket-list">
+    <h3>Recent Tickets</h3>
+    <ul id="historyList"></ul>
+  </div>
 
-    <script>
-        const history = [];
+  <script>
+    const history = [];
 
-        document.getElementById('urlInput').addEventListener('input', () => {
-            const input = document.getElementById('urlInput').value.trim();
-            const match = input.match(/ITA-\d{5,}/i); // match ITA followed by 5+ digits
-            if (match) {
-                const ticket = match[0].toUpperCase();
-                navigator.clipboard.writeText(ticket).catch(() => {});
-
-                document.getElementById('result').textContent = `✅ Extracted: ${ticket}`;
-                if (!history.includes(ticket)) {
-                    history.unshift(ticket);
-                    if (history.length > 6) history.pop();
-                }
-                updateHistory();
-                document.getElementById('urlInput').value = '';
-            }
-        });
-
-        function updateHistory() {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '';
-            history.forEach(ticket => {
-                const li = document.createElement('li');
-                li.textContent = ticket;
-                list.appendChild(li);
-            });
+    document.getElementById("urlInput").addEventListener("input", () => {
+      const input = document.getElementById("urlInput").value.trim();
+      const match = input.match(/ITA-\d+/i); // now matches full ticket code
+      if (match) {
+        const ticket = match[0].toUpperCase();
+        navigator.clipboard.writeText(ticket).catch(() => {});
+        document.getElementById("result").textContent = `✅ Extracted: ${ticket}`;
+        if (!history.includes(ticket)) {
+          history.unshift(ticket);
+          if (history.length > 6) history.pop();
         }
-    </script>
+        updateHistory();
+        document.getElementById("urlInput").value = "";
+      }
+    });
+
+    function updateHistory() {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      history.forEach((ticket) => {
+        const li = document.createElement("li");
+        li.textContent = ticket;
+        list.appendChild(li);
+      });
+    }
+  </script>
 </body>
 </html>
