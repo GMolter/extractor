@@ -5,33 +5,57 @@
     <title>Ticket Scanner</title>
     <style>
         body {
-            font-family: sans-serif;
-            margin: 40px;
-            max-width: 600px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #f2f2f2, #e0ecff);
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
+
+        h2 {
+            margin-bottom: 20px;
         }
-        button {
-            padding: 8px 16px;
-            font-size: 16px;
-            margin-top: 10px;
+
+        #urlInput {
+            width: 80%;
+            max-width: 500px;
+            padding: 12px;
+            font-size: 18px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
         .ticket-list {
             margin-top: 30px;
+            width: 80%;
+            max-width: 500px;
+            text-align: left;
         }
-        li {
+
+        .ticket-list ul {
+            padding-left: 20px;
+        }
+
+        .ticket-list li {
             font-family: monospace;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <h2>🎫 Helpdesk Ticket Scanner</h2>
-    <input type="text" id="urlInput" placeholder="Paste helpdesk URL..." />
-    <button onclick="scanTicket()">Scan & Copy</button>
-
+    <h2>🎟️ Helpdesk Ticket Scanner</h2>
+    <input type="text" id="urlInput" placeholder="Paste URL here..." autocomplete="off" />
     <p id="result"></p>
 
     <div class="ticket-list">
@@ -42,31 +66,24 @@
     <script>
         const history = [];
 
-        function scanTicket() {
+        document.getElementById('urlInput').addEventListener('input', () => {
             const input = document.getElementById('urlInput').value.trim();
             const match = input.match(/(ITA-\d+)/i);
             if (match) {
                 const ticket = match[1].toUpperCase();
-                navigator.clipboard.writeText(ticket)
-                    .then(() => {
-                        document.getElementById('result').textContent = `✅ Copied to clipboard: ${ticket}`;
-                    })
-                    .catch(() => {
-                        document.getElementById('result').textContent = `⚠ Couldn't copy to clipboard.`;
-                    });
+                navigator.clipboard.writeText(ticket).catch(() => {});
 
+                document.getElementById('result').textContent = `Ticket extracted: ${ticket}`;
                 if (!history.includes(ticket)) {
                     history.unshift(ticket);
                     if (history.length > 6) history.pop();
                 }
-
                 updateHistory();
-            } else {
-                document.getElementById('result').textContent = '❌ No ticket code found.';
-            }
 
-            document.getElementById('urlInput').value = '';
-        }
+                // Reset input
+                document.getElementById('urlInput').value = '';
+            }
+        });
 
         function updateHistory() {
             const list = document.getElementById('historyList');
