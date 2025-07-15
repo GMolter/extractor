@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Scanner</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            max-width: 600px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .ticket-list {
+            margin-top: 30px;
+        }
+        li {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h2>🎫 Helpdesk Ticket Scanner</h2>
+    <input type="text" id="urlInput" placeholder="Paste helpdesk URL..." />
+    <button onclick="scanTicket()">Scan & Copy</button>
+
+    <p id="result"></p>
+
+    <div class="ticket-list">
+        <h3>Recent Tickets</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <script>
+        const history = [];
+
+        function scanTicket() {
+            const input = document.getElementById('urlInput').value.trim();
+            const match = input.match(/(ITA-\d+)/i);
+            if (match) {
+                const ticket = match[1].toUpperCase();
+                navigator.clipboard.writeText(ticket)
+                    .then(() => {
+                        document.getElementById('result').textContent = `✅ Copied to clipboard: ${ticket}`;
+                    })
+                    .catch(() => {
+                        document.getElementById('result').textContent = `⚠ Couldn't copy to clipboard.`;
+                    });
+
+                if (!history.includes(ticket)) {
+                    history.unshift(ticket);
+                    if (history.length > 6) history.pop();
+                }
+
+                updateHistory();
+            } else {
+                document.getElementById('result').textContent = '❌ No ticket code found.';
+            }
+
+            document.getElementById('urlInput').value = '';
+        }
+
+        function updateHistory() {
+            const list = document.getElementById('historyList');
+            list.innerHTML = '';
+            history.forEach(ticket => {
+                const li = document.createElement('li');
+                li.textContent = ticket;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
