@@ -82,7 +82,7 @@
 
     document.getElementById("urlInput").addEventListener("input", () => {
       const input = document.getElementById("urlInput").value.trim();
-      const match = input.match(/ITA-\d+/i); // now matches full ticket code
+      const match = input.match(/ITA-\d{5,}/i); // requires at least 5 digits after ITA-
       if (match) {
         const ticket = match[0].toUpperCase();
         navigator.clipboard.writeText(ticket).catch(() => {});
