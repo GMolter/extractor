@@ -79,21 +79,26 @@
 
   <script>
     const history = [];
+    let inputTimer = null;
 
     document.getElementById("urlInput").addEventListener("input", () => {
-      const input = document.getElementById("urlInput").value.trim();
-      const match = input.match(/ITA-\d{5,}/i); // requires at least 5 digits after ITA-
-      if (match) {
-        const ticket = match[0].toUpperCase();
-        navigator.clipboard.writeText(ticket).catch(() => {});
-        document.getElementById("result").textContent = `✅ Extracted: ${ticket}`;
-        if (!history.includes(ticket)) {
-          history.unshift(ticket);
-          if (history.length > 6) history.pop();
+      // Debounce input to wait for full scan
+      clearTimeout(inputTimer);
+      inputTimer = setTimeout(() => {
+        const input = document.getElementById("urlInput").value.trim();
+        const match = input.match(/ITA-\d{6}/i); // Match ITA- followed by exactly 6 digits
+        if (match) {
+          const ticket = match[0].toUpperCase();
+          navigator.clipboard.writeText(ticket).catch(() => {});
+          document.getElementById("result").textContent = `✅ Extracted: ${ticket}`;
+          if (!history.includes(ticket)) {
+            history.unshift(ticket);
+            if (history.length > 6) history.pop();
+          }
+          updateHistory();
+          document.getElementById("urlInput").value = "";
         }
-        updateHistory();
-        document.getElementById("urlInput").value = "";
-      }
+      }, 150); // wait 150ms for input to stabilize
     });
 
     function updateHistory() {
